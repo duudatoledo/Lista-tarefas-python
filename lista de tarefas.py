@@ -12,14 +12,25 @@ class Lista_tarefas:
 
     def adc_tarefa(self):
         self.tarefa = (input("Adicionar tarefa:"))
-        self.tarefas.append(self.tarefa)
+        self.conjunto_tarefa = {"tarefa": self.tarefa, "concluída": False}
+        self.tarefas.append(self.conjunto_tarefa)
     
     def listar(self):
         if not self.tarefas:
             print("Nenhuma tarefa")
+        else:       
+            for i, valor in enumerate(self.tarefas, start=1):
+                status = "✓" if valor["concluída"] else "Pendente"
+                print(f"{i}- {valor["tarefa"]} [{status}]")
+
+    def concluir(self):
+        self.indice = int(input("Qual tarefa deseja concluir?")) - 1
+        if 0 <= self.indice < len(self.tarefas): 
+            self.tarefas[self.indice]["concluída"] = True
+            print("Tarefa concluída")
         else:
-            for self.tarefa in self.tarefas:
-                print(self.tarefa)
+            print("Essa tarefa não existe")
+
 
     def executar(self):
         while True:
