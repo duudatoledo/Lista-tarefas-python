@@ -1,9 +1,10 @@
 class Lista_tarefas:
     menu= """
     [1] Adicionar tarefa
-    [2] Listar tarefas
-    [3] Concluir tarefas
-    [4] Sair
+    [2] Listar tarefa
+    [3] Alterar tarefa
+    [4] Excluir tarefa
+    [5] Sair
 
 => """
     def __init__(self):
@@ -12,7 +13,7 @@ class Lista_tarefas:
 
     def adc_tarefa(self):
         self.tarefa = (input("Adicionar tarefa:"))
-        self.conjunto_tarefa = {"tarefa": self.tarefa, "concluída": False}
+        self.conjunto_tarefa = {"tarefa": self.tarefa, "concluida": False}
         self.tarefas.append(self.conjunto_tarefa)
     
     def listar(self):
@@ -20,17 +21,27 @@ class Lista_tarefas:
             print("Nenhuma tarefa")
         else:       
             for i, valor in enumerate(self.tarefas, start=1):
-                status = "✓" if valor["concluída"] else "Pendente"
+                status = "✓" if valor["concluida"] else "Pendente"
                 print(f"{i}- {valor["tarefa"]} [{status}]")
 
-    def concluir(self):
-        self.indice = int(input("Qual tarefa deseja concluir?")) - 1
-        if 0 <= self.indice < len(self.tarefas): 
-            self.tarefas[self.indice]["concluída"] = True
-            print("Tarefa concluída")
+    def alterar_sistema(self):
+        self.indice = int(input("Qual tarefa deseja alterar?")) - 1
+        if 0 <= self.indice < len(self.tarefas) and ["concluida"] == False: 
+            self.tarefas[self.indice]["concluida"] = True
+            print("Tarefa concluida")
+        elif 0 <= self.indice < len(self.tarefas) and ["concluida"] == True:
+            self.tarefas[self.indice]["concluida"] = False
+            print("Tarefa desconcluida")
         else:
             print("Essa tarefa não existe")
 
+    def excluir_tarefa(self):
+        self.indice = int(input("Qual tarefa deseja excluir?")) - 1
+        if 0 <= self.indice < len(self.tarefas): 
+            self.tarefas.pop(self.indice)
+            print("Tarefa excluida")
+        else:
+            print("Essa tarefa não existe")
 
     def executar(self):
         while True:
@@ -40,12 +51,15 @@ class Lista_tarefas:
                 self.adc_tarefa()
 
             elif opcao == "2":
-                 self.listar()
+                self.listar()
 
             elif opcao == "3":
-                 self.concluir()
-             
-            elif opcao== "4":
+                self.alterar_sistema()
+
+            elif opcao == "4":
+                self.excluir_tarefa()
+
+            elif opcao== "5":
                  print("Encerrando...")
                  break
              
