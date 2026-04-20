@@ -1,3 +1,5 @@
+import json
+
 class Lista_tarefas:
     menu= """
     [1] Adicionar tarefa
@@ -8,15 +10,20 @@ class Lista_tarefas:
 
 => """
     def __init__(self):
+
         self.tarefas = []
+        self.carregar_tarefas()
         pass
 
     def adc_tarefa(self):
+
         self.tarefa = (input("Adicionar tarefa:"))
         self.conjunto_tarefa = {"tarefa": self.tarefa, "concluida": False}
         self.tarefas.append(self.conjunto_tarefa)
+        self.salvar_arquivo()    
     
     def listar(self):
+
         if not self.tarefas:
             print("Nenhuma tarefa")
         else:       
@@ -25,17 +32,22 @@ class Lista_tarefas:
                 print(f"{i}- {valor["tarefa"]} [{status}]")
 
     def alterar_sistema(self):
+
         self.indice = int(input("Qual tarefa deseja alterar?")) - 1
-        if 0 <= self.indice < len(self.tarefas) and ["concluida"] == False: 
-            self.tarefas[self.indice]["concluida"] = True
-            print("Tarefa concluida")
-        elif 0 <= self.indice < len(self.tarefas) and ["concluida"] == True:
-            self.tarefas[self.indice]["concluida"] = False
-            print("Tarefa desconcluida")
+        
+        if 0 <= self.indice < len(self.tarefas): 
+            self.tarefas[self.indice]["concluida"] = not self.tarefas[self.indice]["concluida"] 
+            
+            if self.tarefas[self.indice]["concluida"]:
+                 print("Tarefa concluída ✔")
+            
+            else:
+                print("Tarefa alterada")
         else:
             print("Essa tarefa não existe")
 
     def excluir_tarefa(self):
+
         self.indice = int(input("Qual tarefa deseja excluir?")) - 1
         if 0 <= self.indice < len(self.tarefas): 
             self.tarefas.pop(self.indice)
@@ -44,6 +56,7 @@ class Lista_tarefas:
             print("Essa tarefa não existe")
 
     def executar(self):
+
         while True:
             opcao=(input(self.menu))
 
@@ -65,6 +78,23 @@ class Lista_tarefas:
              
             else:
                  print("Opção inválida")
+
+    def salvar_arquivo(self):
+
+        with open("tarefas.json", "w") as arquivo:
+            json.dump(self.tarefas, arquivo, indent=4)
+            print("Salvando..." 
+            "\nSalvo.")
+    
+    def carregar_tarefas(self):
+
+        try:
+            with open("tarefas.json", "r") as arquivo:
+                self.dados = json.load(arquivo)
+                self.tarefas = self.dados
+                print("CARREGANDO...", self.tarefas)
+        except:
+            self.tarefas = []
 
 conta= Lista_tarefas()
 conta.executar()
