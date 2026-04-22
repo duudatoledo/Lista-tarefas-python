@@ -1,14 +1,52 @@
 [
     {
-        "tarefa": "a",
-        "concluida": false
+        "tarefa": "Prova de matem\u00e1tica",
+        "concluida": false,
+        "prioridade": "alta"
     },
     {
-        "tarefa": "b",
-        "concluida": false
+        "tarefa": "trabalho",
+        "concluida": false,
+        "prioridade": "alta"
     },
     {
-        "tarefa": "c",
-        "concluida": false
+        "tarefa": "Beber 2l de agu\u00e1",
+        "concluida": false,
+        "prioridade": "alta"
+    },
+    {
+        "tarefa": "Dormir",
+        "concluida": false,
+        "prioridade": "alta"
+    },
+    {
+        "tarefa": "Tarefa de ingles",
+        "concluida": false,
+        "prioridade": "media"
+    },
+    {
+        "tarefa": "descansar",
+        "concluida": false,
+        "prioridade": "media"
+    },
+    {
+        "tarefa": "ver s\u00e9rie",
+        "concluida": false,
+        "prioridade": "baixa"
+    },
+    {
+        "tarefa": "aaa",
+        "concluida": false,
+        "prioridade": "baixa"
+    },
+    {
+        "tarefa": "teste",
+        "concluida": false,
+        "prioridade": "baixa"
+    },
+    {
+        "tarefa": "lis",
+        "concluida": false,
+        "prioridade": "alta"
     }
 ]

@@ -17,82 +17,97 @@ class Lista_tarefas:
 
     def adc_tarefa(self):
 
-        self.tarefa = (input("Adicionar tarefa:"))
-        self.conjunto_tarefa = {"tarefa": self.tarefa, "concluida": False}
+        self.tarefa = (input('Adicionar tarefa:'))
+
+        while True:
+            self.prioridade = input('Qual o nível de prioridade desta tarefa?(alta, media, baixa): ').strip().lower()
+           
+            if self.prioridade in ['alta','media','baixa']:
+                    break
+            else:
+                print('Opção inválida. Tente novamente.')
+        print(f'Prioridade selecionada: {self.prioridade}') 
+        self.conversao_prioridade = {'alta': 1, 'media': 2, 'baixa': 3}
+        self.tarefas.sort(key=lambda valor: self.conversao_prioridade[valor['prioridade']])
+        
+        self.conjunto_tarefa = {'tarefa': self.tarefa, 'concluida': False, 'prioridade': self.prioridade}
         self.tarefas.append(self.conjunto_tarefa)
         self.salvar_arquivo()    
     
     def listar(self):
 
         if not self.tarefas:
-            print("Nenhuma tarefa")
+            print('Nenhuma tarefa')
         else:       
             for i, valor in enumerate(self.tarefas, start=1):
-                status = "✓" if valor["concluida"] else "Pendente"
-                print(f"{i}- {valor["tarefa"]} [{status}]")
+                status = "✓" if valor['concluida'] else 'Pendente'
+                print(f"{i}- {valor['tarefa']} [{status} ] [{valor.get('prioridade', 'sem prioridade')}]")
+
 
     def alterar_sistema(self):
 
-        self.indice = int(input("Qual tarefa deseja alterar?")) - 1
+        self.indice = int(input('Qual tarefa deseja alterar?')) - 1
         
         if 0 <= self.indice < len(self.tarefas): 
-            self.tarefas[self.indice]["concluida"] = not self.tarefas[self.indice]["concluida"] 
+            self.tarefas[self.indice]['concluida'] = not self.tarefas[self.indice]['concluida'] 
             
-            if self.tarefas[self.indice]["concluida"]:
-                 print("Tarefa concluída ✔")
+            if self.tarefas[self.indice]['concluida']:
+                 print('Tarefa concluída ✔')
             
             else:
-                print("Tarefa alterada")
+                print('Tarefa alterada')
         else:
-            print("Essa tarefa não existe")
+            print('Essa tarefa não existe')
+        self.salvar_arquivo()
 
     def excluir_tarefa(self):
 
-        self.indice = int(input("Qual tarefa deseja excluir?")) - 1
+        self.indice = int(input('Qual tarefa deseja excluir?')) - 1
         if 0 <= self.indice < len(self.tarefas): 
             self.tarefas.pop(self.indice)
-            print("Tarefa excluida")
+            print('Tarefa excluida')
         else:
-            print("Essa tarefa não existe")
+            print('Essa tarefa não existe')
+        self.salvar_arquivo()
 
     def executar(self):
 
         while True:
             opcao=(input(self.menu))
 
-            if opcao == "1":
+            if opcao == '1':
                 self.adc_tarefa()
 
-            elif opcao == "2":
+            elif opcao == '2':
                 self.listar()
 
-            elif opcao == "3":
+            elif opcao == '3':
                 self.alterar_sistema()
 
-            elif opcao == "4":
+            elif opcao == '4':
                 self.excluir_tarefa()
 
-            elif opcao== "5":
-                 print("Encerrando...")
+            elif opcao== '5':
+                 print('Encerrando...')
                  break
              
             else:
-                 print("Opção inválida")
+                 print('Opção inválida')
 
     def salvar_arquivo(self):
 
-        with open("tarefas.json", "w") as arquivo:
+        with open('tarefas.json', 'w') as arquivo:
             json.dump(self.tarefas, arquivo, indent=4)
-            print("Salvando..." 
-            "\nSalvo.")
+            print('Salvando...' 
+            '\nSalvo.',self.tarefas)
     
     def carregar_tarefas(self):
 
         try:
-            with open("tarefas.json", "r") as arquivo:
+            with open('tarefas.json', 'r') as arquivo:
                 self.dados = json.load(arquivo)
                 self.tarefas = self.dados
-                print("CARREGANDO...", self.tarefas)
+                print('CARREGANDO...')
         except:
             self.tarefas = []
 
