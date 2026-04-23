@@ -1,4 +1,8 @@
 import json
+import os
+from pathlib import Path
+
+ROOT_PATH = Path(__file__).parent
 
 class Lista_tarefas:
     menu= """
@@ -6,7 +10,8 @@ class Lista_tarefas:
     [2] Listar tarefa
     [3] Alterar tarefa
     [4] Excluir tarefa
-    [5] Sair
+    [5] Limpar todas as tarefas
+    [6] Sair
 
 => """
     def __init__(self):
@@ -22,28 +27,32 @@ class Lista_tarefas:
         while True:
             self.prioridade = input('Qual o nível de prioridade desta tarefa?(alta, media, baixa): ').strip().lower()
            
-            if self.prioridade in ['alta','media','baixa']:
+            if self.prioridade in ['ALTA','media','baixa']:
                     break
             else:
                 print('Opção inválida. Tente novamente.')
         print(f'Prioridade selecionada: {self.prioridade}') 
-        self.conversao_prioridade = {'alta': 1, 'media': 2, 'baixa': 3}
-        self.tarefas.sort(key=lambda valor: self.conversao_prioridade[valor['prioridade']])
         
         self.conjunto_tarefa = {'tarefa': self.tarefa, 'concluida': False, 'prioridade': self.prioridade}
         self.tarefas.append(self.conjunto_tarefa)
+    
         self.salvar_arquivo()    
     
     def listar(self):
 
         if not self.tarefas:
             print('Nenhuma tarefa')
-        else:       
+        else:
+            self.ordem_prioridades() 
+            print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}" ('-' * 55))      
             for i, valor in enumerate(self.tarefas, start=1):
-                status = "✓" if valor['concluida'] else 'Pendente'
-                print(f"{i}- {valor['tarefa']} [{status} ] [{valor.get('prioridade', 'sem prioridade')}]")
+                status = 'Concluída' if valor['concluida'] else 'Pendente'
+                print(f'{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10}')
 
-
+    def ordem_prioridades(self):
+        self.conversao_prioridade = {'ALTA': 1, 'media': 2, 'baixa': 3}
+        self.tarefas.sort(key=lambda valor: self.conversao_prioridade[valor['prioridade']])
+        
     def alterar_sistema(self):
 
         self.indice = int(input('Qual tarefa deseja alterar?')) - 1
@@ -70,6 +79,19 @@ class Lista_tarefas:
             print('Essa tarefa não existe')
         self.salvar_arquivo()
 
+    def limpar_tarefas(self):
+        self.apagar = input('Tem certeza?(n/s):').lower().strip()
+        
+        if self.apagar == "s" or self.apagar == "sim":
+            self.tarefas.clear()
+            self.salvar_arquivo()
+            print('Tarefas excluidas com sucesso!')
+        
+        elif self.apagar == "n" or self.apagar == "não" or self.apagar == "nao":
+            print("Ação cancelada.")
+        else:
+            print("Resposta inválida.")    
+
     def executar(self):
 
         while True:
@@ -87,19 +109,22 @@ class Lista_tarefas:
             elif opcao == '4':
                 self.excluir_tarefa()
 
-            elif opcao== '5':
-                 print('Encerrando...')
-                 break
+            elif opcao == '5':
+                self.limpar_tarefas()
+
+            elif opcao== '6':
+                print('Encerrando...')
+                break
              
             else:
-                 print('Opção inválida')
+                print('Opção inválida')
 
     def salvar_arquivo(self):
 
-        with open('tarefas.json', 'w') as arquivo:
+        with open(ROOT_PATH / 'tarefas.json', 'w') as arquivo:
             json.dump(self.tarefas, arquivo, indent=4)
             print('Salvando...' 
-            '\nSalvo.',self.tarefas)
+            '\nSalvo.', os.getcwd())
     
     def carregar_tarefas(self):
 
