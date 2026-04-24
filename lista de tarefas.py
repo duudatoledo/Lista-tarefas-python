@@ -12,13 +12,25 @@ class Lista_tarefas:
     [4] Excluir tarefa
     [5] Limpar todas as tarefas
     [6] Sair
+    [7] Filtrar tarefas
+
+
+=> """
+
+    filtros= """
+    [1] Prioridade alta
+    [2] Prioridade media
+    [3] Prioridade baixa
+    [4] Concluídas
+    [5] Pendentes
+    [6] Sair
+
 
 => """
     def __init__(self):
 
         self.tarefas = []
         self.carregar_tarefas()
-        pass
 
     def adc_tarefa(self):
 
@@ -27,7 +39,7 @@ class Lista_tarefas:
         while True:
             self.prioridade = input('Qual o nível de prioridade desta tarefa?(alta, media, baixa): ').strip().lower()
            
-            if self.prioridade in ['ALTA','media','baixa']:
+            if self.prioridade in ['alta','media','baixa']:
                     break
             else:
                 print('Opção inválida. Tente novamente.')
@@ -44,13 +56,14 @@ class Lista_tarefas:
             print('Nenhuma tarefa')
         else:
             self.ordem_prioridades() 
-            print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}" ('-' * 55))      
+            print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}") 
+            print('-' * 55)      
             for i, valor in enumerate(self.tarefas, start=1):
                 status = 'Concluída' if valor['concluida'] else 'Pendente'
                 print(f'{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10}')
 
     def ordem_prioridades(self):
-        self.conversao_prioridade = {'ALTA': 1, 'media': 2, 'baixa': 3}
+        self.conversao_prioridade = {'alta': 1, 'media': 2, 'baixa': 3}
         self.tarefas.sort(key=lambda valor: self.conversao_prioridade[valor['prioridade']])
         
     def alterar_sistema(self):
@@ -115,6 +128,9 @@ class Lista_tarefas:
             elif opcao== '6':
                 print('Encerrando...')
                 break
+
+            elif opcao== '7':
+                self.filtrar_tarefas()
              
             else:
                 print('Opção inválida')
@@ -129,12 +145,62 @@ class Lista_tarefas:
     def carregar_tarefas(self):
 
         try:
-            with open('tarefas.json', 'r') as arquivo:
+            with open(ROOT_PATH / 'tarefas.json', 'r') as arquivo:
                 self.dados = json.load(arquivo)
                 self.tarefas = self.dados
                 print('CARREGANDO...')
         except:
             self.tarefas = []
+
+    def filtrar_tarefas(self):
+        while True:
+            filtro=input(f"Como deseja filtrar as tarefas?: {(self.filtros)}" )
+
+            if filtro == '1':
+                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}") 
+                print('-' * 55) 
+                for i, valor in enumerate(self.tarefas, start=1):
+                    if valor['prioridade'] == 'alta':
+                        status = 'Concluída' if valor['concluida'] else 'Pendente'
+                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10}")
+
+            elif filtro == '2':
+                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}") 
+                print('-' * 55) 
+                for i, valor in enumerate(self.tarefas, start=1):
+                    if valor['prioridade'] == 'media':
+                        status = 'Concluída' if valor['concluida'] else 'Pendente'
+                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10}")
+
+            elif filtro == '3':
+                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}") 
+                print('-' * 55) 
+                for i, valor in enumerate(self.tarefas, start=1):
+                    if valor['prioridade'] == 'baixa':
+                        status = 'Concluída' if valor['concluida'] else 'Pendente'
+                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10}")
+
+            elif filtro == '4': 
+                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}") 
+                print('-' * 55) 
+                for i,valor in enumerate(self.tarefas, start=1):
+                    if valor['concluida'] == True:
+                        status = 'Concluída' if valor['concluida'] else 'Pendente'
+                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10}")
+
+            elif filtro == '5':
+                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}") 
+                print('-' * 55) 
+                for i,valor in enumerate(self.tarefas, start=1):
+                    if valor['concluida'] == False:
+                        status = 'Concluída' if valor['concluida'] else 'Pendente'
+                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10}")
+
+            elif filtro== '6':
+                print('Encerrando...')
+                break
+
+
 
 conta= Lista_tarefas()
 conta.executar()

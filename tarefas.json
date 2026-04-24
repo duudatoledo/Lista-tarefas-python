@@ -6,7 +6,17 @@
     },
     {
         "tarefa": "teste02",
-        "concluida": false,
+        "concluida": true,
         "prioridade": "alta"
+    },
+    {
+        "tarefa": "teste03",
+        "concluida": false,
+        "prioridade": "media"
+    },
+    {
+        "tarefa": "teste04",
+        "concluida": true,
+        "prioridade": "baixa"
     }
 ]
