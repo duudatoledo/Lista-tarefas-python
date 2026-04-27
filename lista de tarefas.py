@@ -23,7 +23,8 @@ class Lista_tarefas:
     [3] Prioridade baixa
     [4] Concluídas
     [5] Pendentes
-    [6] Sair
+    [6] Buscar
+    [7] Sair
 
 
 => """
@@ -34,7 +35,7 @@ class Lista_tarefas:
 
     def adc_tarefa(self):
 
-        self.tarefa = (input('Adicionar tarefa:'))
+        self.tarefa = (input('Adicionar tarefa:')).strip().lower()
 
         while True:
             self.prioridade = input('Qual o nível de prioridade desta tarefa?(alta, media, baixa): ').strip().lower()
@@ -68,19 +69,26 @@ class Lista_tarefas:
         
     def alterar_sistema(self):
 
-        self.indice = int(input('Qual tarefa deseja alterar?')) - 1
+        try:
+
+            self.indice = int(input('Qual tarefa deseja alterar?')) - 1
         
-        if 0 <= self.indice < len(self.tarefas): 
-            self.tarefas[self.indice]['concluida'] = not self.tarefas[self.indice]['concluida'] 
+            if 0 <= self.indice < len(self.tarefas): 
+                self.tarefas[self.indice]['concluida'] = not self.tarefas[self.indice]['concluida'] 
             
-            if self.tarefas[self.indice]['concluida']:
-                 print('Tarefa concluída ✔')
+                if self.tarefas[self.indice]['concluida']:
+                    print('Tarefa concluída ✔')
             
+                else:
+                    print('Tarefa alterada')
             else:
-                print('Tarefa alterada')
-        else:
-            print('Essa tarefa não existe')
-        self.salvar_arquivo()
+                print('Essa tarefa não existe')
+
+            self.salvar_arquivo()
+
+        except:
+            print("Opção inválida.")
+            return
 
     def excluir_tarefa(self):
 
@@ -195,8 +203,20 @@ class Lista_tarefas:
                     if valor['concluida'] == False:
                         status = 'Concluída' if valor['concluida'] else 'Pendente'
                         print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10}")
+            
+            elif filtro == '6':
+                buscar = input("O que quer buscar?").strip().lower()
+                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}") 
+                print('-' * 55) 
+                self.encontrou = False
+                for i,tarefa in enumerate(self.tarefas, start=1):
+                    if buscar in tarefa['tarefa'].lower() and self.encontrou == True: 
+                        status = 'Concluída' if tarefa['concluida'] else 'Pendente'
+                        print(f"{i:<3} | {tarefa['tarefa'][:20]:<20} | {status:<10} | {tarefa['prioridade']:<10}")
+                if self.encontrou == False:
+                    print('Nenhuma tarefa encontrada.')
 
-            elif filtro== '6':
+            elif filtro== '7':
                 print('Encerrando...')
                 break
 
