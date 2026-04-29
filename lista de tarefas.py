@@ -1,6 +1,7 @@
 import json
 import os
 from pathlib import Path
+from datetime import datetime
 
 ROOT_PATH = Path(__file__).parent
 
@@ -13,9 +14,8 @@ class Lista_tarefas:
     [5] Limpar todas as tarefas
     [6] Sair
     [7] Filtrar tarefas
-
-
-=> """
+    [8] Estatistica
+    => """
 
     filtros= """
     [1] Prioridade alta
@@ -29,14 +29,12 @@ class Lista_tarefas:
 
 => """
     def __init__(self):
-
         self.tarefas = []
         self.carregar_tarefas()
 
     def adc_tarefa(self):
-
         self.tarefa = (input('Adicionar tarefa:')).strip().lower()
-
+        data_entrega = input("Data de entrega (dd/mm/aaaa): ").strip()
         while True:
             self.prioridade = input('Qual o nível de prioridade desta tarefa?(alta, media, baixa): ').strip().lower()
            
@@ -46,27 +44,41 @@ class Lista_tarefas:
                 print('Opção inválida. Tente novamente.')
         print(f'Prioridade selecionada: {self.prioridade}') 
         
-        self.conjunto_tarefa = {'tarefa': self.tarefa, 'concluida': False, 'prioridade': self.prioridade}
+        self.conjunto_tarefa = {'tarefa': self.tarefa, 'concluida': False, 'prioridade': self.prioridade, 'data': datetime.now().strftime('%d/%m/%Y'), 'data_entrega': data_entrega}
         self.tarefas.append(self.conjunto_tarefa)
-    
         self.salvar_arquivo()    
     
     def listar(self):
-
+        
         if not self.tarefas:
             print('Nenhuma tarefa')
         else:
             self.ordem_prioridades() 
-            print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}") 
-            print('-' * 55)      
+            print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10} | {'DATA':<10}") 
+            print('-' * 70)      
             for i, valor in enumerate(self.tarefas, start=1):
                 status = 'Concluída' if valor['concluida'] else 'Pendente'
-                print(f'{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10}')
+                print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10} | {valor['data']:<10}")
 
     def ordem_prioridades(self):
         self.conversao_prioridade = {'alta': 1, 'media': 2, 'baixa': 3}
-        self.tarefas.sort(key=lambda valor: self.conversao_prioridade[valor['prioridade']])
+        tipo = input("""Como deseja ordenar?
+            [1] Prioridade
+            [2] Data de entrega
+
+            => """)
         
+        if tipo == '1':
+            self.tarefas.sort(key=lambda valor: self.conversao_prioridade[valor['prioridade']])
+       
+        elif tipo == '2':
+            self.tarefas.sort(
+            key=lambda t: datetime.strptime(t['data_entrega'], '%d/%m/%Y')
+        )
+        else:
+            print("Opção inválida. Tente novamente")
+
+
     def alterar_sistema(self):
 
         try:
@@ -87,18 +99,23 @@ class Lista_tarefas:
             self.salvar_arquivo()
 
         except:
-            print("Opção inválida.")
+            print("Opção inválida. Digite apenas números.")
             return
 
     def excluir_tarefa(self):
 
-        self.indice = int(input('Qual tarefa deseja excluir?')) - 1
-        if 0 <= self.indice < len(self.tarefas): 
-            self.tarefas.pop(self.indice)
-            print('Tarefa excluida')
-        else:
-            print('Essa tarefa não existe')
-        self.salvar_arquivo()
+        try:
+  
+            self.indice = int(input('Qual tarefa deseja excluir?')) - 1
+            if 0 <= self.indice < len(self.tarefas): 
+                self.tarefas.pop(self.indice)
+                print('Tarefa excluida')
+            else:
+                print('Essa tarefa não existe')
+            self.salvar_arquivo()
+
+        except:
+            print("Opção inválida. Digite apenas números.")
 
     def limpar_tarefas(self):
         self.apagar = input('Tem certeza?(n/s):').lower().strip()
@@ -114,9 +131,9 @@ class Lista_tarefas:
             print("Resposta inválida.")    
 
     def executar(self):
-
+        
         while True:
-            opcao=(input(self.menu))
+            opcao= input(self.menu)
 
             if opcao == '1':
                 self.adc_tarefa()
@@ -139,6 +156,9 @@ class Lista_tarefas:
 
             elif opcao== '7':
                 self.filtrar_tarefas()
+
+            elif opcao =='8':
+                self.estatisticas()
              
             else:
                 print('Opção inválida')
@@ -147,8 +167,7 @@ class Lista_tarefas:
 
         with open(ROOT_PATH / 'tarefas.json', 'w') as arquivo:
             json.dump(self.tarefas, arquivo, indent=4)
-            print('Salvando...' 
-            '\nSalvo.', os.getcwd())
+            print('Salvando...\nSalvo.', os.getcwd())
     
     def carregar_tarefas(self):
 
@@ -156,8 +175,11 @@ class Lista_tarefas:
             with open(ROOT_PATH / 'tarefas.json', 'r') as arquivo:
                 self.dados = json.load(arquivo)
                 self.tarefas = self.dados
+                self.ordem_prioridades
                 print('CARREGANDO...')
-        except:
+
+        except Exception as e:
+            print("ERRO AO CARREGAR:", e)
             self.tarefas = []
 
     def filtrar_tarefas(self):
@@ -210,7 +232,8 @@ class Lista_tarefas:
                 print('-' * 55) 
                 self.encontrou = False
                 for i,tarefa in enumerate(self.tarefas, start=1):
-                    if buscar in tarefa['tarefa'].lower() and self.encontrou == True: 
+                    if buscar in tarefa['tarefa'].lower():
+                        self.encontrou = True
                         status = 'Concluída' if tarefa['concluida'] else 'Pendente'
                         print(f"{i:<3} | {tarefa['tarefa'][:20]:<20} | {status:<10} | {tarefa['prioridade']:<10}")
                 if self.encontrou == False:
@@ -220,7 +243,40 @@ class Lista_tarefas:
                 print('Encerrando...')
                 break
 
+    def estatisticas(self):
+        self.con = 0
+        self.pen = 0
+        self.al = 0
+        self.bai = 0
+        self.med = 0
+        for valor in self.tarefas:
+            if valor['concluida']:
+                self.con += 1
+            else:
+                self.pen +=1
+
+            if valor['prioridade'] == 'alta':
+                self.al += 1
+
+            if valor['prioridade'] == 'media':
+                self.med += 1
+            
+            if valor['prioridade'] == 'baixa':
+                self.bai += 1
+
+        porcentagem = (self.con / len(self.tarefas)) * 100 if self.tarefas else 0
+
+        print(f"""======= ESTATÍSTICAS =======
+        Total:        {len(self.tarefas)}  
+        Concluídas:   {self.con} ({porcentagem:.1f}%)
+        Pendentes:    {self.pen}
+
+        ALTA:         {self.al}
+        MEDIA:        {self.med}
+        BAIXA:        {self.bai}
+        """)
 
 
-conta= Lista_tarefas()
-conta.executar()
+if __name__ == "__main__":
+    conta = Lista_tarefas()
+    conta.executar()

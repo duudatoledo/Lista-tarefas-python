@@ -1,27 +1,15 @@
 [
     {
-        "tarefa": "teste",
+        "tarefa": "teste01",
         "concluida": false,
-        "prioridade": "alta"
-    },
-    {
-        "tarefa": "teste02",
-        "concluida": true,
-        "prioridade": "alta"
+        "prioridade": "baixa",
+        "data": "29/04/2026"
     },
     {
         "tarefa": "teste03",
         "concluida": false,
-        "prioridade": "media"
-    },
-    {
-        "tarefa": "teste04",
-        "concluida": true,
-        "prioridade": "baixa"
-    },
-    {
-        "tarefa": "ola",
-        "concluida": false,
-        "prioridade": "baixa"
+        "prioridade": "media",
+        "data": "29/04/2026",
+        "data_entrega": "22/33/44"
     }
 ]
