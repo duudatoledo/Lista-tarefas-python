@@ -17,13 +17,15 @@ Sistema de gerenciamento de tarefas desenvolvido em Python com persistência em 
 - Python
 - JSON
 
-## ▶️ Como executar
-
-```bash
-python lista_de_tarefas.py
-
 ## 💡 Melhorias futuras
 
 - Ordenação por data de entrega
 - Interface gráfica
 - Destaque para tarefas atrasadas
+  
+## ▶️ Como executar
+
+```bash
+python lista_de_tarefas.py
+
+
