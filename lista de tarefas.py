@@ -5,7 +5,7 @@ from datetime import datetime
 
 ROOT_PATH = Path(__file__).parent
 
-class Lista_tarefas:
+class ListaTarefas:
     menu= """
     [1] Adicionar tarefa
     [2] Listar tarefa
@@ -32,19 +32,18 @@ class Lista_tarefas:
         self.tarefas = []
         self.carregar_tarefas()
 
-    def adc_tarefa(self):
-        self.tarefa = (input('Adicionar tarefa:')).strip().lower()
+    def adc_tarefa(self, tarefa, data_entrega):
+        tarefa = (input('Adicionar tarefa:')).strip().lower()
         data_entrega = input("Data de entrega (dd/mm/aaaa): ").strip()
         while True:
             self.prioridade = input('Qual o nível de prioridade desta tarefa?(alta, media, baixa): ').strip().lower()
-           
             if self.prioridade in ['alta','media','baixa']:
                     break
             else:
                 print('Opção inválida. Tente novamente.')
         print(f'Prioridade selecionada: {self.prioridade}') 
         
-        self.conjunto_tarefa = {'tarefa': self.tarefa, 'concluida': False, 'prioridade': self.prioridade, 'data': datetime.now().strftime('%d/%m/%Y'), 'data_entrega': data_entrega}
+        self.conjunto_tarefa = {'tarefa': tarefa, 'concluida': False, 'prioridade': self.prioridade, 'data': datetime.now().strftime('%d/%m/%Y'), 'data_entrega': data_entrega}
         self.tarefas.append(self.conjunto_tarefa)
         self.salvar_arquivo()    
     
@@ -60,8 +59,8 @@ class Lista_tarefas:
                 status = 'Concluída' if valor['concluida'] else 'Pendente'
                 print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10} | {valor['data']:<10}")
 
-    def ordem_prioridades(self):
-        self.conversao_prioridade = {'alta': 1, 'media': 2, 'baixa': 3}
+    def ordem_prioridades(self,conversao_prioridade):
+        conversao_prioridade = {'alta': 1, 'media': 2, 'baixa': 3}
         tipo = input("""Como deseja ordenar?
             [1] Prioridade
             [2] Data de entrega
@@ -69,7 +68,7 @@ class Lista_tarefas:
             => """)
         
         if tipo == '1':
-            self.tarefas.sort(key=lambda valor: self.conversao_prioridade[valor['prioridade']])
+            self.tarefas.sort(key=lambda valor: conversao_prioridade[valor['prioridade']])
        
         elif tipo == '2':
             self.tarefas.sort(
@@ -79,16 +78,16 @@ class Lista_tarefas:
             print("Opção inválida. Tente novamente")
 
 
-    def alterar_sistema(self):
+    def alterar_sistema(self, indice):
 
         try:
 
-            self.indice = int(input('Qual tarefa deseja alterar?')) - 1
+            indice = int(input('Qual tarefa deseja alterar?')) - 1
         
-            if 0 <= self.indice < len(self.tarefas): 
-                self.tarefas[self.indice]['concluida'] = not self.tarefas[self.indice]['concluida'] 
+            if 0 <= indice < len(self.tarefas): 
+                self.tarefas[indice]['concluida'] = not self.tarefas[indice]['concluida'] 
             
-                if self.tarefas[self.indice]['concluida']:
+                if self.tarefas[indice]['concluida']:
                     print('Tarefa concluída ✔')
             
                 else:
@@ -102,13 +101,13 @@ class Lista_tarefas:
             print("Opção inválida. Digite apenas números.")
             return
 
-    def excluir_tarefa(self):
+    def excluir_tarefa(self, indice):
 
         try:
   
-            self.indice = int(input('Qual tarefa deseja excluir?')) - 1
-            if 0 <= self.indice < len(self.tarefas): 
-                self.tarefas.pop(self.indice)
+            indice = int(input('Qual tarefa deseja excluir?')) - 1
+            if 0 <= indice < len(self.tarefas): 
+                self.tarefas.pop(indice)
                 print('Tarefa excluida')
             else:
                 print('Essa tarefa não existe')
@@ -175,7 +174,6 @@ class Lista_tarefas:
             with open(ROOT_PATH / 'tarefas.json', 'r') as arquivo:
                 self.dados = json.load(arquivo)
                 self.tarefas = self.dados
-                self.ordem_prioridades
                 print('CARREGANDO...')
 
         except Exception as e:
@@ -244,39 +242,38 @@ class Lista_tarefas:
                 break
 
     def estatisticas(self):
-        self.con = 0
-        self.pen = 0
-        self.al = 0
-        self.bai = 0
-        self.med = 0
+        con = 0
+        pen = 0
+        al = 0
+        bai = 0
+        med = 0
         for valor in self.tarefas:
             if valor['concluida']:
-                self.con += 1
+                con += 1
             else:
-                self.pen +=1
+                pen +=1
 
             if valor['prioridade'] == 'alta':
-                self.al += 1
+                al += 1
 
             if valor['prioridade'] == 'media':
-                self.med += 1
+                med += 1
             
             if valor['prioridade'] == 'baixa':
-                self.bai += 1
+                bai += 1
 
-        porcentagem = (self.con / len(self.tarefas)) * 100 if self.tarefas else 0
+        porcentagem = (con / len(self.tarefas)) * 100 if self.tarefas else 0
 
         print(f"""======= ESTATÍSTICAS =======
         Total:        {len(self.tarefas)}  
-        Concluídas:   {self.con} ({porcentagem:.1f}%)
-        Pendentes:    {self.pen}
+        Concluídas:   {con} ({porcentagem:.1f}%)
+        Pendentes:    {pen}
 
-        ALTA:         {self.al}
-        MEDIA:        {self.med}
-        BAIXA:        {self.bai}
+        ALTA:         {al}
+        MEDIA:        {med}
+        BAIXA:        {bai}
         """)
 
 
-if __name__ == "__main__":
-    conta = Lista_tarefas()
-    conta.executar()
+conta = ListaTarefas()
+conta.executar()
