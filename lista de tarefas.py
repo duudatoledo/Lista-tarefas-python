@@ -28,22 +28,31 @@ class ListaTarefas:
 
 
 => """
+
     def __init__(self):
         self.tarefas = []
         self.carregar_tarefas()
 
-    def adc_tarefa(self, tarefa, data_entrega):
+    def adc_tarefa(self):
         tarefa = (input('Adicionar tarefa:')).strip().lower()
-        data_entrega = input("Data de entrega (dd/mm/aaaa): ").strip()
         while True:
+            data_entrada = input("Data de entrega (dd/mm/aaaa): ").strip()
+            try:
+                data_date = datetime.strptime(data_entrada, "%d/%m/%Y")
+                break
+            except ValueError:
+                print("Formato inválido. Tente novamente.")
+            
+        while True:
+
             self.prioridade = input('Qual o nível de prioridade desta tarefa?(alta, media, baixa): ').strip().lower()
             if self.prioridade in ['alta','media','baixa']:
                     break
             else:
                 print('Opção inválida. Tente novamente.')
         print(f'Prioridade selecionada: {self.prioridade}') 
-        
-        self.conjunto_tarefa = {'tarefa': tarefa, 'concluida': False, 'prioridade': self.prioridade, 'data': datetime.now().strftime('%d/%m/%Y'), 'data_entrega': data_entrega}
+        data_str = data_date.strftime("%d/%m/%Y")
+        self.conjunto_tarefa = {'tarefa': tarefa, 'concluida': False, 'prioridade': self.prioridade, 'data': datetime.now().strftime('%d/%m/%Y'), 'data_entrega': data_str}
         self.tarefas.append(self.conjunto_tarefa)
         self.salvar_arquivo()    
     
@@ -52,21 +61,23 @@ class ListaTarefas:
         if not self.tarefas:
             print('Nenhuma tarefa')
         else:
-            self.ordem_prioridades() 
-            print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10} | {'DATA':<10}") 
-            print('-' * 70)      
+            self.ordenar_tarefas() 
+            print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10} | {'DATA':<12} | {'DATA DE ENTREGA':<10}") 
+            print('-' * 100)      
             for i, valor in enumerate(self.tarefas, start=1):
                 status = 'Concluída' if valor['concluida'] else 'Pendente'
-                print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10} | {valor['data']:<10}")
+                print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10} | {valor['data']:<12}  {valor['data_str']:<10}")
 
-    def ordem_prioridades(self,conversao_prioridade):
-        conversao_prioridade = {'alta': 1, 'media': 2, 'baixa': 3}
+    def ordenar_tarefas(self):
         tipo = input("""Como deseja ordenar?
-            [1] Prioridade
-            [2] Data de entrega
+    [1] Prioridade
+    [2] Data de entrega
 
-            => """)
-        
+ => """)
+        self.ordem_prioridade(tipo)
+         
+    def ordem_prioridade(self,tipo):
+        conversao_prioridade = {'alta': 1, 'media': 2, 'baixa': 3}
         if tipo == '1':
             self.tarefas.sort(key=lambda valor: conversao_prioridade[valor['prioridade']])
        
@@ -77,8 +88,7 @@ class ListaTarefas:
         else:
             print("Opção inválida. Tente novamente")
 
-
-    def alterar_sistema(self, indice):
+    def alterar_sistema(self):
 
         try:
 
@@ -101,7 +111,7 @@ class ListaTarefas:
             print("Opção inválida. Digite apenas números.")
             return
 
-    def excluir_tarefa(self, indice):
+    def excluir_tarefa(self):
 
         try:
   
@@ -185,55 +195,54 @@ class ListaTarefas:
             filtro=input(f"Como deseja filtrar as tarefas?: {(self.filtros)}" )
 
             if filtro == '1':
-                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}") 
+                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10} | {'DATA':<12} | {'DATA DE ENTREGA':<10}")
                 print('-' * 55) 
                 for i, valor in enumerate(self.tarefas, start=1):
                     if valor['prioridade'] == 'alta':
                         status = 'Concluída' if valor['concluida'] else 'Pendente'
-                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10}")
+                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10} | {valor['data']:<12}  {valor['data_str']:<10}")
 
             elif filtro == '2':
-                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}") 
+                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10} | {'DATA':<12} | {'DATA DE ENTREGA':<10}")
                 print('-' * 55) 
                 for i, valor in enumerate(self.tarefas, start=1):
                     if valor['prioridade'] == 'media':
                         status = 'Concluída' if valor['concluida'] else 'Pendente'
-                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10}")
+                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10} | {valor['data']:<12}  {valor['data_str']:<10}")
 
             elif filtro == '3':
-                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}") 
+                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10} | {'DATA':<12} | {'DATA DE ENTREGA':<10}")
                 print('-' * 55) 
                 for i, valor in enumerate(self.tarefas, start=1):
                     if valor['prioridade'] == 'baixa':
                         status = 'Concluída' if valor['concluida'] else 'Pendente'
-                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10}")
+                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10} | {valor['data']:<12}  {valor['data_str']:<10}")
 
             elif filtro == '4': 
-                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}") 
+                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10} | {'DATA':<12} | {'DATA DE ENTREGA':<10}")
                 print('-' * 55) 
                 for i,valor in enumerate(self.tarefas, start=1):
                     if valor['concluida'] == True:
                         status = 'Concluída' if valor['concluida'] else 'Pendente'
-                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10}")
+                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10} | {valor['data']:<12}  {valor['data_str']:<10}")
 
             elif filtro == '5':
-                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}") 
+                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10} | {'DATA':<12} | {'DATA DE ENTREGA':<10}")
                 print('-' * 55) 
                 for i,valor in enumerate(self.tarefas, start=1):
                     if valor['concluida'] == False:
                         status = 'Concluída' if valor['concluida'] else 'Pendente'
-                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10}")
-            
+                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10} | {valor['data']:<12}  {valor['data_str']:<10}")
             elif filtro == '6':
                 buscar = input("O que quer buscar?").strip().lower()
-                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10}") 
+                print(f"{'Nº':<3} | {'TAREFA':<20} | {'STATUS':<10} | {'PRIORIDADE':<10} | {'DATA':<12} | {'DATA DE ENTREGA':<10}")
                 print('-' * 55) 
                 self.encontrou = False
                 for i,tarefa in enumerate(self.tarefas, start=1):
                     if buscar in tarefa['tarefa'].lower():
                         self.encontrou = True
                         status = 'Concluída' if tarefa['concluida'] else 'Pendente'
-                        print(f"{i:<3} | {tarefa['tarefa'][:20]:<20} | {status:<10} | {tarefa['prioridade']:<10}")
+                        print(f"{i:<3} | {valor['tarefa'][:20]:<20} | {status:<10} | {valor['prioridade']:<10} | {valor['data']:<12}  {valor['data_str']:<10}")
                 if self.encontrou == False:
                     print('Nenhuma tarefa encontrada.')
 
