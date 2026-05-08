@@ -1,9 +1,30 @@
 [
     {
+        "tarefa": "teste03",
+        "concluida": true,
+        "prioridade": "alta",
+        "data": "08/05/2026",
+        "data_entrega": "10/05/2026"
+    },
+    {
+        "tarefa": "teste02",
+        "concluida": false,
+        "prioridade": "media",
+        "data": "08/05/2026",
+        "data_entrega": "22/05/2026"
+    },
+    {
         "tarefa": "testeo1",
         "concluida": false,
         "prioridade": "media",
         "data": "06/05/2026",
         "data_entrega": "22/06/2026"
+    },
+    {
+        "tarefa": "teste04",
+        "concluida": false,
+        "prioridade": "alta",
+        "data": "08/05/2026",
+        "data_entrega": "01/05/2026"
     }
 ]
