@@ -19,9 +19,7 @@ Sistema de gerenciamento de tarefas desenvolvido em Python com persistência em 
 
 ## 💡 Melhorias futuras
 
-- Ordenação por data de entrega
 - Interface gráfica
-- Destaque para tarefas atrasadas
   
 ## ▶️ Como executar
 
